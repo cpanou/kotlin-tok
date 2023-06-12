@@ -2,6 +2,7 @@ package gr.tek.talks.tektalksdemo.http.router
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import gr.tek.talks.tektalksdemo.http.entities.AuthorizedRequest
+import gr.tek.talks.tektalksdemo.http.entities.EmptyRequest
 import gr.tek.talks.tektalksdemo.http.entities.GuestRequest
 import gr.tek.talks.tektalksdemo.http.entities.dto.UserInfoDTO
 import gr.tek.talks.tektalksdemo.http.entities.request.*
@@ -10,6 +11,7 @@ import gr.tek.talks.tektalksdemo.http.error.ServiceException
 import gr.tek.talks.tektalksdemo.http.filter.UserInfoFilter
 import gr.tek.talks.tektalksdemo.service.ChatAPIHandler
 import kotlinx.coroutines.reactor.mono
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
@@ -20,12 +22,14 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Configuration
 class ChatRouter(
     val chatService: ChatAPIHandler,
     val objectMapper: ObjectMapper
 ) {
+    val log = LoggerFactory.getLogger("Mine");
 
     @Bean
     fun staticResources() = router {
@@ -35,7 +39,7 @@ class ChatRouter(
     @Bean
     fun userRoutes() = router {
         "/api/account".nest {
-            GET {
+            GET("/{username}") {
                 it.handlePublic(UserInfoFetchRequest::class.java, chatService::getUserInfo)
             }
             POST {
@@ -63,23 +67,37 @@ class ChatRouter(
     fun <T : GuestRequest, R : Any> ServerRequest.handlePublic(
         rClass: Class<T>, handlerFunction: (T) -> R
     ): Mono<ServerResponse> {
-        return bodyToMono(rClass).flatMap {
-            serverResponse(handlerFunction, it)
-        }
+        return bodyToMono(rClass)
+            .switchIfEmpty {
+                mono {
+                    objectMapper.readValue("{}", rClass)
+                }
+            }
+            .flatMap {
+                if (it is EmptyRequest)
+                    it.initSelf(request = this)
+                serverResponse(handlerFunction, it)
+            }
     }
 
     fun <T : AuthorizedRequest, R : Any> ServerRequest.handleAuthorized(
         rClass: Class<T>, handlerFunction: (T) -> R
     ): Mono<ServerResponse> {
-        return bodyToMono(rClass).map {
-            val auth = headers().firstHeader(HttpHeaders.AUTHORIZATION);
-            val user = objectMapper.readValue(auth, UserInfoDTO::class.java)
-            it.apply {
-                userInfo = user
+        return bodyToMono(rClass)
+            .switchIfEmpty {
+                mono {
+                    objectMapper.readValue("{}", rClass)
+                }
             }
-        }.flatMap {
-            serverResponse(handlerFunction, it)
-        }
+            .flatMap {
+                if (it is EmptyRequest)
+                    it.initSelf(request = this)
+                val auth = headers().firstHeader(HttpHeaders.AUTHORIZATION);
+                val user = objectMapper.readValue(auth, UserInfoDTO::class.java)
+                serverResponse(handlerFunction, it.apply {
+                    userInfo = user
+                })
+            }
     }
 
     private inline fun <T : Any, R : Any> serverResponse(crossinline handlerFunction: (T) -> R, it: T)
