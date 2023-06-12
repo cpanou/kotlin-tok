@@ -2,6 +2,10 @@ auth = {
     init: (userInfo) => {
         state.saveUserInfo(userInfo)
     },
+    logout: () => {
+        state.clear()
+        init()
+    },
     authentication: () => {
         if (!state || !state.userInfo || !state.userInfo.username)
             throw new Error("not Logged In")

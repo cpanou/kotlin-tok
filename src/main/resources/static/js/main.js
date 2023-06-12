@@ -1,9 +1,11 @@
-window.onload = function (e) {
+function init() {
     state.load()
     auth.resolve()
         .then(userInfo => controller.render(controller.pages.CHAT))
         .catch(e => controller.render(controller.pages.LOGIN))
 }
+
+window.onload = init
 
 
 controller = {
@@ -81,7 +83,13 @@ controller = {
         },
     },
     avatar: {
-        selector: () => document.querySelector(".avatar")
+        selector: () => document.querySelector("#avatar"),
+        dropdownActivator: () => document.querySelector(".footer"),
+        logout: () => document.querySelector(".footer .signout"),
+    },
+    conversations: {
+        groupChats: () => document.querySelector(".nav-bar .links .groups"),
+        privateChats: () => document.querySelector(".nav-bar .links .conversations"),
     },
     chatPage: {
         selector: () => document.querySelector(".page.chat"),
@@ -90,7 +98,6 @@ controller = {
         button: () => document.getElementById("send-message-button"),
         sendMessage: function () {
             let text = controller.chatPage.messageInput().value;
-            console.log("Sending Message: ", text)
             chatting.sendMessage(text)
             controller.chatPage.messageInput().value = "";
         },
@@ -114,8 +121,15 @@ controller = {
                         e.preventDefault()
                         controller.chatPage.sendMessage();
                     }
-                    var initials = (state.userInfo.firstname[0]) + (state.userInfo.lastname[0]);
+                    const initials = (state.userInfo.firstname[0]) + (state.userInfo.lastname[0]);
                     controller.avatar.selector().innerText = initials.toUpperCase();
+                    controller.avatar.selector().onclick = function (e) {
+                        controller.avatar.dropdownActivator().classList.toggle("clicked")
+                        if(controller.avatar.dropdownActivator().classList.contains("clicked")){
+                            controller.avatar.logout().onclick = auth.logout
+                        }
+                    }
+                    chatting.initialize()
                 })
                 .catch(e => {
                     controller.render(controller.pages.JOIN)
@@ -214,6 +228,21 @@ chatting = {
             entry = chatting.chatLog.selector().appendChild(entry)
             chatting.chatLog.container().scrollTop = chatting.chatLog.selector().scrollHeight
         },
+    },
+    socket: {
+      init: () => {
+
+      }
+    },
+    initialize: () => {
+        let container = controller.conversations.groupChats();
+        state.groups.forEach(grp => {
+            let initial = grp.name[0].toUpperCase();
+            const grpEntry = document.createElement("div")
+            grpEntry.classList.add("thumb")
+            grpEntry.innerText = initial
+            container.appendChild(grpEntry)
+        });
     },
     sendMessage: (message) => {
         chatting.chatLog.createMyEntry({

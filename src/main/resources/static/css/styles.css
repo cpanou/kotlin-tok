@@ -6,6 +6,7 @@
     --background-color: #434a52;
     --background-color-dark: #2c3338;
     --background-color-input: #3b4148;
+    --background-color-avatar: #037883;
     --background-color-input-label: #363b41;
     --background-color-message: #41484f;
     --primary-accent-color: #ea4c88;
@@ -121,30 +122,6 @@ a:hover {
 }
 
 /* modules/chat.css */
-.avatar {
-    vertical-align: middle;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--background-color-input);
-    margin: 16px;
-    padding: 4px;
-    text-align: center;
-    color: white;
-    font-size: 1.5rem;
-    line-height: 3rem;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 10;
-    letter-spacing: 2px;
-    text-indent: 2px;
-    box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
-    -webkit-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
-    -moz-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
-}
 
 .page.chat {
     width: 100vw;
@@ -174,9 +151,90 @@ a:hover {
     border-bottom: 2px solid #bbb;
 }
 
+.page.chat .nav-bar .links {
+    flex: 1
+}
+
+.page.chat .nav-bar .footer {
+    border-top: 2px solid #bbb;
+    width: 60px;
+    height: auto;
+    padding: 10px 0 6px 0;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+#avatar {
+    position: relative;
+}
+
+.footer.clicked .signout {
+    display: block;
+}
+
+.footer .signout {
+    display: none;
+    position: absolute;
+    bottom: 16px;
+    left: 90px;
+    padding: 10px;
+    border-radius: 10%;
+    color: white;
+    min-width: 100px;
+    background-color: var(--background-color-input-label);
+    font-weight: bolder;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.page.chat .nav-bar .links .groups {
+    overflow: unset;
+}
+
+.page.chat .nav-bar .links .thumb {
+    margin: 10px 15px 10px 15px;
+    box-shadow: -6px 7px 0px -1px rgb(99, 54, 136);
+    -webkit-box-shadow: -6px 7px 0px -1px rgba(99, 54, 136);
+    -moz-box-shadow: -6px 7px 0px -1px rgba(99, 54, 136);
+}
+
+.page.chat .nav-bar #avatar.thumb {
+    border-radius: 50%;
+}
+.page.chat .nav-bar .thumb {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 30%;
+    background-color: var(--background-color-avatar);
+    padding: 4px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-indent: 2px;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.page.chat .nav-bar .groups.grp {
+
+}
+
+.page.chat .nav-bar .conversations.grp {
+
+}
+
+
 .page.chat .nav-bar .separator {
     border-top: 2px solid #bbb;
-    margin: 5px 6%;
+    margin: 16px 10px;
 }
 
 .page.chat .chat-content {
@@ -192,7 +250,7 @@ a:hover {
 .page .chat-log-container {
     flex: 1;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
     height: fit-content;
     flex-direction: column-reverse;
     justify-content: flex-start;
@@ -272,11 +330,16 @@ form.chat {
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
+    margin: 0 160px 0 120px;
 }
 
 .form__field.send-message {
     flex: 1;
     color: white;
+}
+
+.form__field #send-message-button {
+    border-radius: 1.2rem;
 }
 
 form.chat .form__input,
