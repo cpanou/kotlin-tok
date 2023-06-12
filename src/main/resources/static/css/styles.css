@@ -121,6 +121,30 @@ a:hover {
 }
 
 /* modules/chat.css */
+.avatar {
+    vertical-align: middle;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--background-color-input);
+    margin: 16px;
+    padding: 4px;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    letter-spacing: 2px;
+    text-indent: 2px;
+    box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+    -webkit-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+    -moz-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+}
 
 .page.chat {
     width: 100vw;
@@ -165,14 +189,39 @@ a:hover {
     padding: 0 20px;
 }
 
-.page .chat-log {
+.page .chat-log-container {
     flex: 1;
-    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    height: fit-content;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+}
+
+.page .chat-log-container::-webkit-scrollbar {
+    width: 0.65em;
+}
+
+.page .chat-log-container::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0.65em rgba(0, 0, 0, 0.3);
+}
+
+.page .chat-log-container::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+    border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+}
+
+.page .chat-log {
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     padding: 0 20px;
+    min-height: 100%;
+    height: fit-content;
 }
 
 .chat-log .entry {
@@ -227,7 +276,7 @@ form.chat {
 
 .form__field.send-message {
     flex: 1;
-    color:white;
+    color: white;
 }
 
 form.chat .form__input,

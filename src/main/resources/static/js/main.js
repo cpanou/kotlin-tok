@@ -80,6 +80,9 @@ controller = {
             controller.signupPage.switchLogin().onclick = () => controller.render(controller.pages.LOGIN)
         },
     },
+    avatar: {
+        selector: () => document.querySelector(".avatar")
+    },
     chatPage: {
         selector: () => document.querySelector(".page.chat"),
         messageForm: () => document.querySelector(".message-bar .chat"),
@@ -111,6 +114,8 @@ controller = {
                         e.preventDefault()
                         controller.chatPage.sendMessage();
                     }
+                    var initials = (state.userInfo.firstname[0]) + (state.userInfo.lastname[0]);
+                    controller.avatar.selector().innerText = initials.toUpperCase();
                 })
                 .catch(e => {
                     controller.render(controller.pages.JOIN)
@@ -178,6 +183,7 @@ controller = {
 chatting = {
     chatLog: {
         selector: () => document.querySelector(".chat-log"),
+        container: () => document.querySelector(".chat-log-container"),
         createMyEntry: (message) => {
             let entry = document.createElement("div")
             entry.classList.add("entry", "mine")
@@ -186,9 +192,11 @@ chatting = {
             let messageDiv = document.createElement("div")
             messageDiv.classList.add("message")
             messageDiv.innerText = message.text;
+
             container.appendChild(messageDiv)
             entry.appendChild(container)
             chatting.chatLog.selector().appendChild(entry)
+            chatting.chatLog.container().scrollTop = chatting.chatLog.selector().scrollHeight
         },
         createOtherEntry: (message) => {
             let entry = document.createElement("div")
@@ -203,7 +211,8 @@ chatting = {
             container.appendChild(author)
             container.appendChild(messageDiv)
             entry.appendChild(container)
-            chatting.chatLog.selector().appendChild(entry)
+            entry = chatting.chatLog.selector().appendChild(entry)
+            chatting.chatLog.container().scrollTop = chatting.chatLog.selector().scrollHeight
         },
     },
     sendMessage: (message) => {

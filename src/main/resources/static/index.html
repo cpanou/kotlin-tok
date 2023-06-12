@@ -94,6 +94,9 @@
     </div>
 </div>
 <section class="hidden page chat">
+    <div class="avatar">
+
+    </div>
     <div class="nav-bar">
         <div class="header">
             <img src="img/logo.svg" alt="tektok">
@@ -105,41 +108,18 @@
         </div>
     </div>
     <div class="chat-content">
-        <div class="chat-log">
-            <div class="entry other">
-                <div class="message-container">
-                    <div class="author">
-                        Other
-                    </div>
-                    <div class="message">
-                        Do you see this??
-                    </div>
-                </div>
-            </div>
-            <div class="entry other">
-                <div class="message-container">
-                    <div class="author">
-                        Other
-                    </div>
-                    <div class="message">
-                        you there?
-                    </div>
-                </div>
-            </div>
-            <div class="entry mine">
-                <div class="message-container">
-                    <div class="message">
-                        Ye here gotcha
-                    </div>
-                </div>
+        <div class="chat-log-container">
+            <div class="chat-log">
+
             </div>
         </div>
         <div class="message-bar">
             <form class="chat">
                 <div class="form__field send-message">
                     <label for="send-message__input"></label>
-                    <input id="send-message__input" type="text" name="groupname" class="form__input"
+                    <input id="send-message__input" type="text" name="message" class="form__input"
                            placeholder="write your message"
+                           autocomplete="off"
                            required="">
                 </div>
                 <div class="form__field">
