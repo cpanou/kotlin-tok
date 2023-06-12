@@ -1,10 +1,7 @@
 package gr.tek.talks.tektalksdemo.repository.entities
 
 import gr.tek.talks.tektalksdemo.domain.entities.UserInfo
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
 import java.util.*
@@ -15,6 +12,7 @@ class UserEntity(
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     var id: UUID = UUID.randomUUID(),
+    @Column(unique = true)
     var username: String,
     var firstName: String,
     var lastName: String,

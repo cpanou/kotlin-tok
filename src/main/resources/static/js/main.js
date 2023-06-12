@@ -1,33 +1,51 @@
 window.onload = function (e) {
-    //switch
-    // loggedIn: (fetchChats)
-    //      show chatting page
-    // !loggedIn: ()
-    //      show login
-    // signup: (createUser -> setState)
-    //
-    init()
-        //loggedIn
+    state.load()
+    auth.resolve()
         .then(userInfo => controller.render(controller.pages.CHAT))
-        //not logged In
         .catch(e => controller.render(controller.pages.LOGIN))
 }
 
-function init() {
-    state.load()
-    return auth.resolve()
-}
 
 controller = {
+    error: (error) => {
+        console.log(error)
+        let alert = document.querySelector("div.alert")
+        let alertText = document.querySelector(".alert .alert-text")
+
+        let text = "Something went Wrong!"
+        if (!!error["message"])
+            text = error["message"]
+        else if (!!error["errorDescription"])
+            text = error["errorDescription"]
+        else if (!!error["error"])
+            text = error["error"]
+        else if (typeof error == "string")
+            text = error
+
+        alertText.innerText = text
+
+        alert.classList.remove("hidden")
+        alert.classList.add("error")
+        setTimeout(() => {
+            alert.classList.add("hidden")
+            alert.classList.remove("error")
+        }, 3000)
+    },
+    setupContainer: {
+        selector: () => document.querySelector(".align.body"),
+    },
     loginPage: {
         selector: () => document.querySelector(".form.login"),
         username: () => document.getElementById("login__username"),
         switchSignup: () => document.getElementById("switch_signup"),
         login: function () {
             return api.userInfo(controller.loginPage.username().value)
-                .then(r => r.json())
                 .then(res => auth.init(res.userInfo))
-                .catch(e => controller.render(controller.pages.LOGIN))
+                .then(_ => controller.render(controller.pages.CHAT))
+                .catch(e => {
+                    controller.error(e)
+                    controller.render(controller.pages.LOGIN)
+                })
         },
         init: function () {
             controller.loginPage.selector().onsubmit = (e) => {
@@ -49,8 +67,9 @@ controller = {
                 username: controller.signupPage.username().value,
                 firstname: controller.signupPage.username().value,
                 lastname: controller.signupPage.username().value,
-            }).then(r => r.json())
+            })
                 .then(res => auth.init(res.userInfo))
+                .then(_ => controller.render(controller.pages.CHAT))
                 .catch(e => controller.render(controller.pages.LOGIN))
         },
         init: function () {
@@ -63,20 +82,37 @@ controller = {
     },
     chatPage: {
         selector: () => document.querySelector(".page.chat"),
+        messageForm: () => document.querySelector(".message-bar .chat"),
         messageInput: () => document.getElementById("send-message__input"),
         button: () => document.getElementById("send-message-button"),
         sendMessage: function () {
-            console.log("Sending Message: ", this.messageInput().value)
+            let text = controller.chatPage.messageInput().value;
+            console.log("Sending Message: ", text)
+            chatting.sendMessage(text)
+            controller.chatPage.messageInput().value = "";
         },
         init: function () {
-            api.fetchUserChats()
-                .then(r => r.json())
-                .then(user => state.saveUser(user))
+            new Promise((resolve, reject) => {
+                if (!!state && !!state.groups && state.groups.length > 0) {
+                    resolve(state.getUser())
+                } else {
+                    console.log("No User Chats...")
+                    reject("No User Chats...")
+                }
+            }).catch(e => api.fetchUserChats())
+                .then(user => {
+                    if (!!user && !!user.groups && user.groups.length > 0) {
+                        state.saveUser(user)
+                        return user
+                    } else throw new Error("No User Chats...")
+                })
                 .then(_ => {
-                    this.button().onclick = this.sendMessage;
+                    controller.chatPage.messageForm().onsubmit = (e) => {
+                        e.preventDefault()
+                        controller.chatPage.sendMessage();
+                    }
                 })
                 .catch(e => {
-                    console.log(e)
                     controller.render(controller.pages.JOIN)
                 })
         },
@@ -86,15 +122,12 @@ controller = {
         groupName: () => document.getElementById("joinchat__groupname"),
         button: () => document.getElementById("joinchat-button"),
         joinGroup: function () {
-            api.joinGroup(this.groupName().value)
-                .then(r => r.json())
+            api.joinGroup(controller.joinChat.groupName().value)
                 .then(user => state.saveUser(user))
         },
         init: function () {
-            this.button().onclick = this.sendMessage;
-            this.switchLogin().onclick = read(controller.pages.LOGIN)
+            controller.joinChat.button().onclick = this.joinGroup;
         },
-
     },
     pages: {
         JOIN: "JOIN",
@@ -103,8 +136,10 @@ controller = {
         LOGIN: "LOGIN",
     },
     render: function (page) {
+        console.log(`Navigation To: ${page}`)
         switch (page) {
             case "SIGNUP":
+                controller.setupContainer.selector().classList.remove("hidden")
                 controller.loginPage.selector().classList.add("hidden")
                 controller.chatPage.selector().classList.add("hidden")
                 controller.joinChat.selector().classList.add("hidden")
@@ -112,6 +147,7 @@ controller = {
                 controller.signupPage.init()
                 break
             case "JOIN":
+                controller.setupContainer.selector().classList.remove("hidden")
                 controller.loginPage.selector().classList.add("hidden")
                 controller.chatPage.selector().classList.add("hidden")
                 controller.signupPage.selector().classList.add("hidden")
@@ -119,6 +155,7 @@ controller = {
                 controller.joinChat.init()
                 break
             case "CHAT":
+                controller.setupContainer.selector().classList.add("hidden")
                 controller.loginPage.selector().classList.add("hidden")
                 controller.signupPage.selector().classList.add("hidden")
                 controller.joinChat.selector().classList.add("hidden")
@@ -128,6 +165,7 @@ controller = {
             case "LOGIN":
             default:
                 state.clear()
+                controller.setupContainer.selector().classList.remove("hidden")
                 controller.signupPage.selector().classList.add("hidden")
                 controller.chatPage.selector().classList.add("hidden")
                 controller.joinChat.selector().classList.add("hidden")
@@ -137,125 +175,42 @@ controller = {
     }
 }
 
-auth = {
-    init: (userInfo) => {
-        state.saveUserInfo(userInfo)
+chatting = {
+    chatLog: {
+        selector: () => document.querySelector(".chat-log"),
+        createMyEntry: (message) => {
+            let entry = document.createElement("div")
+            entry.classList.add("entry", "mine")
+            let container = document.createElement("div")
+            container.classList.add("message-container")
+            let messageDiv = document.createElement("div")
+            messageDiv.classList.add("message")
+            messageDiv.innerText = message.text;
+            container.appendChild(messageDiv)
+            entry.appendChild(container)
+            chatting.chatLog.selector().appendChild(entry)
+        },
+        createOtherEntry: (message) => {
+            let entry = document.createElement("div")
+            entry.classList.add("entry", "other")
+            let container = document.createElement("div")
+            container.classList.add("message-container")
+            let author = document.createElement("div")
+            author.classList.add("author")
+            let messageDiv = document.createElement("div")
+            messageDiv.classList.add("message")
+            messageDiv.innerText = message.text;
+            container.appendChild(author)
+            container.appendChild(messageDiv)
+            entry.appendChild(container)
+            chatting.chatLog.selector().appendChild(entry)
+        },
     },
-    authentication: () => {
-        if (!state || !state.userInfo || !state.userInfo.username)
-            return new Promise((resolve, reject) => reject("not Logged In"))
-        return JSON.stringify(`${state.userInfo}`)
-    },
-    resolve: function () {
-        if (!state || !state.userInfo || !state.userInfo.username)
-            return new Promise((resolve, reject) => reject("not Logged In"))
-        return api.userInfo(state.userInfo.username)
-            .then(response => response.json())
-            .then(user => {
-                state.saveUserInfo(user.userInfo)
-                return user;
-            })
-            .catch(e => {
-                console.log(e)
-                throw e
-            })
-    }
-}
-
-state = {
-    userInfo: undefined,
-    groups: undefined,
-    auth: undefined,
-    conversations: undefined,
-    saveUser: function (user) {
-        this.userInfo = user.userInfo
-        this.groups = user.groups
-        this.conversations = user.conversations
-        storage.update()
-    },
-    clear: function () {
-        let st = storage.state()
-        this.userInfo = undefined
-        st["groups"] = undefined
-        this.groups = undefined
-        st["groups"] = undefined
-        this.conversations = undefined
-        st["conversations"] = undefined
-        storage.clear()
-    },
-    load: function () {
-        let st = storage.state()
-        this.userInfo = st["userInfo"]
-        this.groups = st["groups"]
-        this.conversations = st["conversations"]
-    },
-    saveUserInfo: (userInfo) => {
-        storage.save("userInfo", userInfo)
-    },
-
-}
-
-storage = {
-    state: () => {
-        let st = sessionStorage.getItem("state");
-        if (!st) return {}
-        return JSON.parse(st)
-    },
-    save: (key, value) => {
-        let st = sessionStorage.getItem("state");
-        if (!st) st = "{}"
-        let state = JSON.parse(st)
-        state[key] = value
-        sessionStorage.setItem("state", JSON.stringify(state))
-    },
-    get: (key) => {
-        let st = sessionStorage.getItem("state");
-        if (!st) st = "{}"
-        let state = JSON.parse(st)
-        return state[key]
-    },
-    clear: () => {
-        sessionStorage.removeItem("state");
-        sessionStorage.setItem("state", JSON.stringify({"state": undefined}))
-    },
-    update: () => {
-        sessionStorage.removeItem("state");
-        sessionStorage.setItem("state", JSON.stringify({"state": state}))
-    }
-}
-
-api = {
-    baseUrl: "http://localhost:8080",
-    userInfo: (username) =>
-        fetch(`${api.baseUrl}/api/account/${username}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }),
-    createUser: (userInfo) =>
-        fetch(`${api.baseUrl}/api/account`, {
-            method: "POST",
-            body: JSON.stringify(userInfo),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }),
-    fetchUserChats: () =>
-        fetch(`${api.baseUrl}/api/conversations`, {
-            headers: {
-                "Authorization": auth.authentication(),
-                "Content-Type": "application/json"
-            }
-        }),
-    joinGroup: (group) =>
-        fetch(`${api.baseUrl}/api/conversations/users`, {
-            method: "POST",
-            body: JSON.stringify({groupName: group}),
-            headers: {
-                "Authorization": auth.authentication(),
-                "Content-Type": "application/json"
-            }
+    sendMessage: (message) => {
+        chatting.chatLog.createMyEntry({
+            author: state.userInfo.username,
+            text: message
         })
 
+    }
 }

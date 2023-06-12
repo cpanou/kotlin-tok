@@ -2,102 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tek Talks</title>
+    <title>Tek Toks</title>
     <link href="css/styles.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg" sizes="any">
+    <script type="text/javascript" async src="js/storage.js"></script>
+    <script type="text/javascript" async src="js/api.js"></script>
     <script type="text/javascript" async src="js/main.js"></script>
 </head>
-<body class="align">
-<img class="logo" src="img/logo-full.png" alt="logo">
-<div class="grid">
-    <form class="form login">
-        <div class="form__field">
-            <label for="login__username">
-                <svg class="icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
-                </svg>
-                <span class="hidden">Username</span></label>
-            <input id="login__username" type="text" name="username" class="form__input" placeholder="Username"
-                   required="">
-        </div>
-        <div class="form__field">
-            <input id="login-button" type="submit" value="Tok . . .">
-        </div>
-        <p class="text--center">Not a member? <a id="switch_signup">Sign up now</a>
-            <svg class="icon">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="assets/images/icons.svg#arrow-right"></use>
-            </svg>
-        </p>
-    </form>
-    <form class="form signup">
-        <div class="form__field">
-            <label for="signup__username">
-                <svg class="icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
-                </svg>
-                <span class="hidden">Username</span></label>
-            <input id="signup__username" type="text" name="username" class="form__input" placeholder="Username"
-                   required="">
-        </div>
-        <div class="form__field">
-            <label for="signup__firstname">
-                <svg class="icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
-                </svg>
-                <span class="hidden">Password</span></label>
-            <input id="signup__firstname" name="firstname" class="form__input"
-                   placeholder="Firstname"
-                   required="">
-        </div>
-        <div class="form__field">
-            <label for="signup__lastname">
-                <svg class="icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
-                </svg>
-                <span class="hidden">Password</span></label>
-            <input id="signup__lastname" name="lastname" class="form__input"
-                   placeholder="Lastname"
-                   required="">
-        </div>
-        <div class="form__field">
-            <input id="signup-button" type="submit" value="Start Toking">
-        </div>
-        <p class="text--center">Already a member? <a id="switch_login">Sign in</a>
-            <svg class="icon">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="assets/images/icons.svg#arrow-right"></use>
-            </svg>
-        </p>
-    </form>
-    <form class="form join-chat">
-        <div class="form__field">
-            <label for="joinchat__groupname">
-                <svg class="icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
-                </svg>
-                <span class="hidden">Username</span></label>
-            <input id="joinchat__groupname" type="text" name="groupname" class="form__input" placeholder="Group"
-                   required="">
-        </div>
-        <div class="form__field">
-            <input id="joinchat-button" type="submit" value="Join">
-        </div>
-    </form>
-    <section class="page chat">
-        <form class="chat">
+<body>
+<div class="align alert hidden">
+    <p class="alert-text">Something went wrong!!</p>
+</div>
+<div class="align body">
+    <img class="logo" src="img/logo-full.png" alt="logo">
+    <div class="grid">
+        <form class="hidden form login">
             <div class="form__field">
-                <label for="send-message__input">
+                <label for="login__username">
                     <svg class="icon">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
                     </svg>
                     <span class="hidden">Username</span></label>
-                <input id="send-message__input" type="text" name="groupname" class="form__input" placeholder="Group"
+                <input id="login__username" type="text" name="username" class="form__input" placeholder="Username"
                        required="">
             </div>
+            <div class="form__field">
+                <input id="login-button" type="submit" value="Sign In">
+            </div>
+            <p class="text--center">Not a member? <a id="switch_signup">Sign up now</a>
+                <svg class="icon">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                         xlink:href="assets/images/icons.svg#arrow-right"></use>
+                </svg>
+            </p>
         </form>
-        <div class="form__field">
-            <input id="send-message-button" type="submit" value="Send">
-        </div>
-    </section>
+        <form class="hidden form signup">
+            <div class="form__field">
+                <label for="signup__username">
+                    <svg class="icon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
+                    </svg>
+                    <span class="hidden">Username</span></label>
+                <input id="signup__username" type="text" name="username" class="form__input" placeholder="Username"
+                       required="">
+            </div>
+            <div class="form__field">
+                <label for="signup__firstname">
+                    <svg class="icon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
+                    </svg>
+                    <span class="hidden">Password</span></label>
+                <input id="signup__firstname" name="firstname" class="form__input"
+                       placeholder="Firstname"
+                       required="">
+            </div>
+            <div class="form__field">
+                <label for="signup__lastname">
+                    <svg class="icon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
+                    </svg>
+                    <span class="hidden">Password</span></label>
+                <input id="signup__lastname" name="lastname" class="form__input"
+                       placeholder="Lastname"
+                       required="">
+            </div>
+            <div class="form__field">
+                <input id="signup-button" type="submit" value="Start Toking">
+            </div>
+            <p class="text--center">Already a member? <a id="switch_login">Sign in</a>
+                <svg class="icon">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                         xlink:href="assets/images/icons.svg#arrow-right"></use>
+                </svg>
+            </p>
+        </form>
+        <form class="hidden form join-chat">
+            <h3 class="form__field">Join a Group</h3>
+            <div class="form__field ">
+                <label for="joinchat__groupname">
+                    <svg class="icon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
+                    </svg>
+                    <span class="hidden">Username</span></label>
+                <input id="joinchat__groupname" type="text" name="groupname" class="form__input" placeholder="Group"
+                       required="">
+            </div>
+            <div class="form__field">
+                <input id="joinchat-button" type="submit" value="Join">
+            </div>
+        </form>
+    </div>
 </div>
+<section class="hidden page chat">
+    <div class="nav-bar">
+        <div class="header">
+            <img src="img/logo.svg" alt="tektok">
+        </div>
+        <div class="links">
+            <div class="groups"></div>
+            <div class="separator"></div>
+            <div class="private-messages"></div>
+        </div>
+    </div>
+    <div class="chat-content">
+        <div class="chat-log">
+            <div class="entry other">
+                <div class="message-container">
+                    <div class="author">
+                        Other
+                    </div>
+                    <div class="message">
+                        Do you see this??
+                    </div>
+                </div>
+            </div>
+            <div class="entry other">
+                <div class="message-container">
+                    <div class="author">
+                        Other
+                    </div>
+                    <div class="message">
+                        you there?
+                    </div>
+                </div>
+            </div>
+            <div class="entry mine">
+                <div class="message-container">
+                    <div class="message">
+                        Ye here gotcha
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="message-bar">
+            <form class="chat">
+                <div class="form__field send-message">
+                    <label for="send-message__input"></label>
+                    <input id="send-message__input" type="text" name="groupname" class="form__input"
+                           placeholder="write your message"
+                           required="">
+                </div>
+                <div class="form__field">
+                    <input id="send-message-button" type="submit" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 <svg xmlns="http://www.w3.org/2000/svg" class="icons">
     <symbol id="arrow-right" viewBox="0 0 1792 1792">
         <path d="M1600 960q0 54-37 91l-651 651q-39 37-91 37-51 0-90-37l-75-75q-38-38-38-91t38-91l293-293H245q-52 0-84.5-37.5T128 1024V896q0-53 32.5-90.5T245 768h704L656 474q-38-36-38-90t38-90l75-75q38-38 90-38 53 0 91 38l651 651q37 35 37 90z"></path>

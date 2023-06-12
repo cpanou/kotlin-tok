@@ -7,7 +7,6 @@ import gr.tek.talks.tektalksdemo.http.entities.GuestRequest
 import gr.tek.talks.tektalksdemo.http.entities.dto.UserInfoDTO
 import gr.tek.talks.tektalksdemo.http.entities.request.*
 import gr.tek.talks.tektalksdemo.http.error.ErrorResponse
-import gr.tek.talks.tektalksdemo.http.error.ServiceException
 import gr.tek.talks.tektalksdemo.http.filter.UserInfoFilter
 import gr.tek.talks.tektalksdemo.service.ChatAPIHandler
 import kotlinx.coroutines.reactor.mono
@@ -102,13 +101,13 @@ class ChatRouter(
 
     private inline fun <T : Any, R : Any> serverResponse(crossinline handlerFunction: (T) -> R, it: T)
             : Mono<ServerResponse> {
-        return try {
-            mono {
-                handlerFunction(it)
-            }.flatMap {
-                ServerResponse.ok().body(BodyInserters.fromValue(it))
-            }
-        } catch (e: ServiceException) {
+        return mono {
+            handlerFunction(it)
+        }.flatMap {
+            ServerResponse.ok().body(BodyInserters.fromValue(it))
+        }.switchIfEmpty {
+            ServerResponse.notFound().build()
+        }.onErrorResume { e ->
             val error = ErrorResponse(
                 error = e::class.java.simpleName,
                 errorDescription = e.localizedMessage

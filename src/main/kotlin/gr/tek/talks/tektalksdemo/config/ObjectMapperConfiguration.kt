@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -13,9 +14,10 @@ class ObjectMapperConfiguration {
 
     @Bean
     @Primary
-    fun myObjectMapper(): ObjectMapper {
+    fun objectMapper(): ObjectMapper {
         return jacksonObjectMapper()
             .registerModule(JavaTimeModule())
+            .registerModule(kotlinModule())
             .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false)
