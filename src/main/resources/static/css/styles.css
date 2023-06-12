@@ -9,6 +9,7 @@
     --background-color-avatar: #037883;
     --background-color-input-label: #363b41;
     --background-color-message: #41484f;
+    --background-color-active: #545d65;
     --primary-accent-color: #ea4c88;
     --primary-accent-color-dark: #d44179;
     --alert-bg-success: #2f9e44;
@@ -184,7 +185,7 @@ a:hover {
     background-color: var(--background-color-input-label);
     font-weight: bolder;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 20;
 }
 
@@ -194,14 +195,33 @@ a:hover {
 
 .page.chat .nav-bar .links .thumb {
     margin: 10px 15px 10px 15px;
-    box-shadow: -6px 7px 0px -1px rgb(99, 54, 136);
-    -webkit-box-shadow: -6px 7px 0px -1px rgba(99, 54, 136);
-    -moz-box-shadow: -6px 7px 0px -1px rgba(99, 54, 136);
+    box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
+    -webkit-box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
+    -moz-box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
 }
 
 .page.chat .nav-bar #avatar.thumb {
     border-radius: 50%;
 }
+
+.page.chat .nav-bar .links .thumb.circle {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
+    -webkit-box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
+    -moz-box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
+
+    line-height: 2.75rem;
+    background-color: var(--background-color-dark);
+}
+
+.page.chat .nav-bar #avatar.thumb {
+    font-size: 1.2rem;
+    line-height: 2.75rem;
+    background-color: rgb(140, 91, 1);
+}
+
 .page.chat .nav-bar .thumb {
     vertical-align: middle;
     width: 50px;
@@ -223,14 +243,15 @@ a:hover {
     user-select: none;
 }
 
-.page.chat .nav-bar .groups.grp {
-
+.page.chat .nav-bar .grp {
+    width: 100%;
+    padding: 1px 0 2px;
+    overflow: unset;
 }
 
-.page.chat .nav-bar .conversations.grp {
-
+.page.chat .nav-bar .grp.active {
+    background-color: var(--background-color-active);
 }
-
 
 .page.chat .nav-bar .separator {
     border-top: 2px solid #bbb;
@@ -308,9 +329,9 @@ a:hover {
     -webkit-border-radius: 10px 10px 10px 10px;
     -moz-border-radius: 10px 10px 10px 10px;
 
-    box-shadow: 1px 0 14px 0px var(--shadow-color-dark);
-    -webkit-box-shadow: 1px 0 14px 0px var(--shadow-color-dark);
-    -moz-box-shadow: 1px 0 14px 0px var(--shadow-color-dark);
+    box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
+    -webkit-box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
+    -moz-box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
 }
 
 .chat-log .message-container.mine {

@@ -90,6 +90,10 @@ controller = {
     conversations: {
         groupChats: () => document.querySelector(".nav-bar .links .groups"),
         privateChats: () => document.querySelector(".nav-bar .links .conversations"),
+        initJoin: () => {
+            let button = document.querySelector(".links .thumb.circle");
+            button.onclick = () => controller.render(controller.pages.JOIN);
+        }
     },
     chatPage: {
         selector: () => document.querySelector(".page.chat"),
@@ -102,14 +106,7 @@ controller = {
             controller.chatPage.messageInput().value = "";
         },
         init: function () {
-            new Promise((resolve, reject) => {
-                if (!!state && !!state.groups && state.groups.length > 0) {
-                    resolve(state.getUser())
-                } else {
-                    console.log("No User Chats...")
-                    reject("No User Chats...")
-                }
-            }).catch(e => api.fetchUserChats())
+            api.fetchUserChats()
                 .then(user => {
                     if (!!user && !!user.groups && user.groups.length > 0) {
                         state.saveUser(user)
@@ -125,11 +122,14 @@ controller = {
                     controller.avatar.selector().innerText = initials.toUpperCase();
                     controller.avatar.selector().onclick = function (e) {
                         controller.avatar.dropdownActivator().classList.toggle("clicked")
-                        if(controller.avatar.dropdownActivator().classList.contains("clicked")){
+                        if (controller.avatar.dropdownActivator().classList.contains("clicked")) {
                             controller.avatar.logout().onclick = auth.logout
                         }
                     }
+                    controller.conversations.initJoin()
                     chatting.initialize()
+                    if (state.groups.length > 0)
+                        chatting.activateGroup(state.groups[0])
                 })
                 .catch(e => {
                     controller.render(controller.pages.JOIN)
@@ -229,19 +229,51 @@ chatting = {
             chatting.chatLog.container().scrollTop = chatting.chatLog.selector().scrollHeight
         },
     },
+    groupConvs: {
+        selector: () => document.querySelectorAll(".nav-bar .groups .grp"),
+        create: (grp) => {
+            let initial = grp.name[0].toUpperCase();
+            const grpContainer = document.createElement("div")
+            grpContainer.classList.add("grp")
+            const grpEntry = document.createElement("div")
+            grpEntry.classList.add("thumb")
+            grpEntry.innerText = initial
+            grpEntry.id = grp.id
+            grpEntry.onclick = () => chatting.activateGroup(grp)
+            grpContainer.appendChild(grpEntry)
+            return grpContainer
+        }
+    },
     socket: {
-      init: () => {
+        init: () => {
 
-      }
+        }
+    },
+    activateGroup: (group) => {
+        controller.chatPage.messageInput().value = ""
+        chatting.chatLog.selector().innerHTML = ""
+        chatting.groupConvs.selector()
+            .forEach(grp => {
+                let item = grp.querySelector(".thumb")
+                grp.classList.remove("active")
+                if (item.id === group.id)
+                    grp.classList.add("active")
+            })
+        group.messages.forEach(message => {
+            let msg = {
+                auth: message.user.username,
+                text: message.text
+            };
+            if (message.user.id === state.userInfo.id)
+                chatting.chatLog.createMyEntry(msg)
+            else
+                chatting.chatLog.createOtherEntry(msg)
+        })
     },
     initialize: () => {
         let container = controller.conversations.groupChats();
         state.groups.forEach(grp => {
-            let initial = grp.name[0].toUpperCase();
-            const grpEntry = document.createElement("div")
-            grpEntry.classList.add("thumb")
-            grpEntry.innerText = initial
-            container.appendChild(grpEntry)
+            container.appendChild(chatting.groupConvs.create(grp))
         });
     },
     sendMessage: (message) => {
