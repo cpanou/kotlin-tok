@@ -153,7 +153,12 @@ a:hover {
 }
 
 .page.chat .nav-bar .links {
-    flex: 1
+    overflow-y: scroll;
+    flex: 1;
+}
+
+.page.chat .nav-bar .links::-webkit-scrollbar {
+    width: 0;
 }
 
 .page.chat .nav-bar .footer {
@@ -204,14 +209,14 @@ a:hover {
     border-radius: 50%;
 }
 
-.page.chat .nav-bar .links .thumb.circle {
+.page.chat .nav-bar .thumb.circle {
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
     box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
     -webkit-box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
     -moz-box-shadow: -1px 0 26px -1px rgba(14, 14, 14, 0.5) inset;
-
+    margin: 10px 15px 10px 15px;
+    width: 50px;
+    height: 50px;
     line-height: 2.75rem;
     background-color: var(--background-color-dark);
 }
@@ -250,7 +255,10 @@ a:hover {
 }
 
 .page.chat .nav-bar .grp.active {
-    background-color: var(--background-color-active);
+    /*background-color: var(--background-color-active);*/
+    box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
+    -webkit-box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
+    -moz-box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
 }
 
 .page.chat .nav-bar .separator {

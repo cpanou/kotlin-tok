@@ -91,7 +91,7 @@ controller = {
         groupChats: () => document.querySelector(".nav-bar .links .groups"),
         privateChats: () => document.querySelector(".nav-bar .links .conversations"),
         initJoin: () => {
-            let button = document.querySelector(".links .thumb.circle");
+            let button = document.querySelector(".thumb.circle");
             button.onclick = () => controller.render(controller.pages.JOIN);
         }
     },
@@ -139,6 +139,7 @@ controller = {
     joinChat: {
         selector: () => document.querySelector(".form.join-chat"),
         groupName: () => document.getElementById("joinchat__groupname"),
+        backToChat: () => document.getElementById("switch_tok"),
         button: () => document.getElementById("joinchat-button"),
         joinGroup: function () {
             api.joinGroup(controller.joinChat.groupName().value)
@@ -146,6 +147,7 @@ controller = {
         },
         init: function () {
             controller.joinChat.button().onclick = this.joinGroup;
+            controller.joinChat.backToChat().onclick = (e) => controller.render(controller.pages.CHAT);
         },
     },
     pages: {
@@ -272,6 +274,7 @@ chatting = {
     },
     initialize: () => {
         let container = controller.conversations.groupChats();
+        container.innerHTML = "";
         state.groups.forEach(grp => {
             container.appendChild(chatting.groupConvs.create(grp))
         });
