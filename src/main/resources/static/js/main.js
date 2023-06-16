@@ -126,6 +126,7 @@ controller = {
                             controller.avatar.logout().onclick = auth.logout
                         }
                     }
+                    chatSocket.init()
                     controller.conversations.initJoin()
                     chatting.initialize()
                     if (state.groups.length > 0)
@@ -246,11 +247,6 @@ chatting = {
             return grpContainer
         }
     },
-    socket: {
-        init: () => {
-
-        }
-    },
     activateGroup: (group) => {
         controller.chatPage.messageInput().value = ""
         chatting.chatLog.selector().innerHTML = ""
@@ -284,6 +280,39 @@ chatting = {
             author: state.userInfo.username,
             text: message
         })
+        chatSocket.sendMessage(message)
 
+    }
+}
+
+chatSocket = {
+    socket: undefined,
+    timeout: 50,
+    exponential: () => {
+        if (chatSocket.timeout >= 5000)
+            chatSocket.timeout = 50;
+        return 2 * chatSocket.timeout
+    },
+    init: () => {
+        const socket = new WebSocket("ws://localhost:8080/message-emitter");
+        chatSocket.socket = socket
+
+        socket.addEventListener("open", (event) => {
+            socket.send("Hello Server!");
+        });
+        socket.addEventListener("error", (event) => {
+            controller.error(event);
+        });
+        socket.addEventListener("close", (event) => {
+            controller.error(`Connection Lost: ${event}. Reconnecting: ${chatSocket.exponential()}`);
+            setTimeout(chatSocket.init, chatSocket.exponential())
+            chatSocket.timeout = chatSocket.exponential();
+        });
+        socket.addEventListener("message", (event) => {
+            console.log("Message from server ", event.data);
+        });
+    },
+    sendMessage: (message) => {
+        chatSocket.socket.send(JSON.stringify(message))
     }
 }

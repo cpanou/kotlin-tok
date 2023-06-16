@@ -10,25 +10,39 @@ import gr.tek.talks.tektalksdemo.http.error.ErrorResponse
 import gr.tek.talks.tektalksdemo.http.filter.UserInfoFilter
 import gr.tek.talks.tektalksdemo.service.ChatAPIHandler
 import kotlinx.coroutines.reactor.mono
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.web.reactive.HandlerMapping
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
+import org.springframework.web.reactive.socket.WebSocketHandler
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+
 
 @Configuration
 class ChatRouter(
     val chatService: ChatAPIHandler,
-    val objectMapper: ObjectMapper
+    val objectMapper: ObjectMapper,
+    val chatWebSocketHandler: WebSocketHandler,
 ) {
-    val log = LoggerFactory.getLogger("Mine");
+
+    @Bean
+    fun webSocketHandlerMapping(): HandlerMapping? {
+        val map: MutableMap<String, WebSocketHandler?> = HashMap()
+        map["/message-emitter"] = chatWebSocketHandler
+        return SimpleUrlHandlerMapping()
+            .apply {
+                order = 1
+                urlMap = map
+            }
+    }
 
     @Bean
     fun staticResources() = router {
