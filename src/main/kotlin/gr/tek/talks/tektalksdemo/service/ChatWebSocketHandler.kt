@@ -1,7 +1,10 @@
 package gr.tek.talks.tektalksdemo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import gr.tek.talks.tektalksdemo.domain.service.MessagingService
 import gr.tek.talks.tektalksdemo.http.entities.dto.UserMessageDTO
+import gr.tek.talks.tektalksdemo.messages.ChatMessage
+import kotlinx.coroutines.reactor.mono
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -15,7 +18,8 @@ import reactor.core.publisher.Sinks
 
 @Component
 class ChatWebSocketHandler(
-    val objectMapper: ObjectMapper
+    val objectMapper: ObjectMapper,
+    val messagingService: MessagingService
 ) : WebSocketHandler {
 
     var log: Logger = LoggerFactory.getLogger(ChatAPIHandler::class.java)
@@ -28,6 +32,14 @@ class ChatWebSocketHandler(
             .and(
                 webSocketSession.receive()
                     .map(WebSocketMessage::getPayloadAsText)
+                    .map {
+                        objectMapper.readValue(it, ChatMessage::class.java)
+                    }
+                    .flatMap {
+                        mono {
+                            messagingService.messageReceived(it)
+                        }
+                    }
                     .log()
             )
     }

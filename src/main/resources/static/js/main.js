@@ -133,6 +133,7 @@ controller = {
                         chatting.activateGroup(state.groups[0])
                 })
                 .catch(e => {
+                    controller.error(e)
                     controller.render(controller.pages.JOIN)
                 })
         },
@@ -234,6 +235,7 @@ chatting = {
     },
     groupConvs: {
         selector: () => document.querySelectorAll(".nav-bar .groups .grp"),
+        getActive: () => document.querySelector(".nav-bar .groups .grp.active .thumb"),
         create: (grp) => {
             let initial = grp.name[0].toUpperCase();
             const grpContainer = document.createElement("div")
@@ -259,10 +261,10 @@ chatting = {
             })
         group.messages.forEach(message => {
             let msg = {
-                auth: message.user.username,
+                auth: message.username,
                 text: message.text
             };
-            if (message.user.id === state.userInfo.id)
+            if (message.username === state.userInfo.username)
                 chatting.chatLog.createMyEntry(msg)
             else
                 chatting.chatLog.createOtherEntry(msg)
@@ -276,12 +278,15 @@ chatting = {
         });
     },
     sendMessage: (message) => {
+        chatSocket.sendMessage({
+            groupId: chatting.groupConvs.getActive().id,
+            username: state.userInfo.username,
+            text: message
+        })
         chatting.chatLog.createMyEntry({
             author: state.userInfo.username,
             text: message
         })
-        chatSocket.sendMessage(message)
-
     }
 }
 
@@ -298,7 +303,7 @@ chatSocket = {
         chatSocket.socket = socket
 
         socket.addEventListener("open", (event) => {
-            socket.send("Hello Server!");
+            console.log(event);
         });
         socket.addEventListener("error", (event) => {
             controller.error(event);

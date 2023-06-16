@@ -9,7 +9,7 @@ import java.util.*
 @IdClass(GroupMessageEntity.GroupMessageId::class)
 class GroupMessageEntity(
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "message_id")
     var messageEntity: MessageEntity,
     @Id
