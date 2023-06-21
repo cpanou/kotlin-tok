@@ -1,1 +1,3 @@
-rootProject.name = 'tek-talks-demo'
+rootProject.name = 'tek-toks-demo'
+include 'tek-toks-service'
+
