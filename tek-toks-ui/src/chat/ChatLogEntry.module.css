@@ -1,0 +1,36 @@
+.entry {
+    width: fit-content;
+    max-width: 50%;
+}
+
+.messageContainer {
+    padding: 10px;
+    margin: 10px;
+    background-color: var(--background-color-message);
+    color: white;
+    border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+
+    box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
+    -webkit-box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
+    -moz-box-shadow: 1px 0 14px 0 var(--shadow-color-dark);
+}
+
+.mine {
+    text-align: right;
+    align-self: end;
+}
+
+.time {
+
+}
+
+.entry.mine .messageContainer {
+    background-color: var(--background-color-message-mine);
+}
+
+.other {
+    text-align: left;
+    align-self: start;
+}

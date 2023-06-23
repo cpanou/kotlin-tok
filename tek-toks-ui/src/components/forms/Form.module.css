@@ -1,0 +1,10 @@
+
+.form {
+    flex: 1;
+}
+
+.form input[type='password'],
+.form input[type='text'],
+.form input[type='submit'] {
+    width: 100%;
+}

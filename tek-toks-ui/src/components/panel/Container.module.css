@@ -1,0 +1,20 @@
+
+.centered {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* helpers/grid.css */
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 320px;
+    max-width: 20rem;
+    width: 90%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}

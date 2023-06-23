@@ -1,0 +1,8 @@
+.header {
+    height: auto;
+    padding: 10px 0 6px 0;
+    margin: 0 10px;
+    width: 60px;
+    cursor: pointer;
+    border-bottom: 2px solid #bbb;
+}

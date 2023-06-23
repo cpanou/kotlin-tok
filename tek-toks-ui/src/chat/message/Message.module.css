@@ -1,0 +1,22 @@
+.other {
+    align-self: start;
+}
+
+.mine {
+    align-self: end;
+}
+
+.author {
+    font-weight: bold;
+}
+
+.time {
+    font-weight: normal;
+    margin-left: 20px;
+    margin-bottom: 8px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}

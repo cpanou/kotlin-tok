@@ -1,0 +1,19 @@
+
+.navbar {
+    background-color: var(--background-color-input-label);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 100%;
+    box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+    -webkit-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+    -moz-box-shadow: 1px 0 24px 4px var(--shadow-color-dark);
+}
+
+
+.signout {
+    color: white;
+    min-width: 100px;
+    font-weight: bolder;
+    overflow: auto;
+}

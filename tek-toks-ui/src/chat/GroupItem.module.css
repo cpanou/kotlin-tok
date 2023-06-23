@@ -1,0 +1,33 @@
+.grp {
+    width: 100%;
+    padding: 1px 0 2px;
+    overflow: unset;
+}
+
+.active {
+    /*background-color: var(--background-color-active);*/
+    box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
+    -webkit-box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
+    -moz-box-shadow: 0 0 16px 0 rgba(14, 14, 14, 0.75) inset;
+}
+
+.thumb {
+    margin: 10px 15px 10px 15px;
+    box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
+    -webkit-box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
+    -moz-box-shadow: -6px 7px 0 -1px rgb(136, 54, 85);
+    vertical-align: middle;
+    border-radius: 30%;
+    background-color: var(--background-color-avatar);
+    padding: 4px;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-indent: 2px;
+    -webkit-user-select: none;
+    user-select: none;
+}

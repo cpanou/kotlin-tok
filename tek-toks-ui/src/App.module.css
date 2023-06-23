@@ -1,50 +1,65 @@
+
 :root {
     --background-color: #434a52;
     --background-color-dark: #2c3338;
     --background-color-input: #3b4148;
     --background-color-avatar: #037883;
     --background-color-input-label: #363b41;
+    --background-color-light: #96a4a9;
     --background-color-message: #41484f;
+    --background-color-message-mine: #03616c;
     --background-color-active: #545d65;
     --primary-accent-color: #ea4c88;
     --primary-accent-color-dark: #d44179;
+    --primary-link-color-dark: #18b6f0;
+    --primary-text-color: #EFEFEF;
+    --primary-text-color-dark: #171a1e;
+    --primary-text-color-accent: #7a5c2f;
     --alert-bg-success: #2f9e44;
     --alert-bg-error: #d92943;
     --shadow-color-dark: rgba(30, 29, 29, 0.51)
 }
 
+html {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 100%;
+    height: 100%;
+}
+
 body {
     background-color: var(--background-color-dark);
-    color: white;
-    font-size: 16px;
+    color: var(--primary-text-color);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    height: 100%;
+    line-height: 1.5;
+    margin: 0;
+    min-height: 100vh;
 }
 
 * {
     word-wrap: break-word;
-    overflow: clip;
+    /*overflow: clip;*/
 }
 
 .App {
     text-align: center;
 }
 
-.logo {
-    animation: logo-spin infinite 20s linear;
-    height: 40vmin;
-    pointer-events: none;
+
+a {
+    outline: 0;
+    text-decoration: underline;
+    color: var(--primary-link-color-dark);
 }
 
-.header {
-    display: flex;
-    flex-direction: row;
-    align-items: end;
-    justify-content: space-between;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
-
-.link {
-    color: #b318f0;
+a:focus,
+a:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 @keyframes logo-spin {
@@ -54,4 +69,42 @@ body {
     to {
         transform: rotate(360deg);
     }
+}
+
+
+/* helpers/hidden.css */
+
+.hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+
+/* modules/alert.css*/
+
+.alert {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background-color: var(--alert-bg-success);
+    padding: 12px 0 12px 0;
+    max-height: 3rem;
+}
+
+.alert.error {
+    background-color: var(--alert-bg-error);
+}
+
+.alert p.alert-text {
+    margin: 0;
+    color: #eee;
+    font-weight: bolder;
 }

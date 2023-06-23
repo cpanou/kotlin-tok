@@ -1,0 +1,8 @@
+.links {
+    overflow-y: scroll;
+    flex: 1;
+}
+
+.links::-webkit-scrollbar {
+    width: 0;
+}

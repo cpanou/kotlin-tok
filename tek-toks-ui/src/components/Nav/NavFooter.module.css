@@ -1,0 +1,17 @@
+.footer {
+    border-top: 2px solid #bbb;
+    height: auto;
+    width: 60px;
+    padding: 10px 0 6px 0;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.thumb {
+    position: relative;
+    border-radius: 50%;
+}
+
+.footer.clicked .signout {
+    display: block;
+}

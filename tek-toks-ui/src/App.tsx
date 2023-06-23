@@ -1,28 +1,42 @@
 import type {Component} from 'solid-js';
-import {HelloWorld} from "./components/helloWorld/HelloWorld";
-
-import logo from './logo.svg';
 import styles from './App.module.css';
+import {Icons} from "./components/icons/Icons";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ChatPage from "./pages/ChatPage";
+import {Route, Router, Routes} from "@solidjs/router";
+import GroupJoinPage from "./pages/GroupJoinPage";
+import RouteGuard from "./guards/RouteGuard";
+import PublicRouteGuard from "./guards/PublicRouteGuard";
 
 const App: Component = () => {
+
     return (
         <div class={styles.App}>
-            <header class={styles.header}>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a
-                    class={styles.link}
-                    href="https://github.com/solidjs/solid"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn Solid
-                </a>
-            </header>
-            <HelloWorld
-            />
-            <img src={logo} class={styles.logo} alt="logo"/>
+            <Icons/>
+            <Router>
+                <Routes>
+                    <Route path="/signin" component={PublicRouteGuard}>
+                        <Route path="*" component={LoginPage}/>
+                    </Route>
+                    <Route path="/signup" component={PublicRouteGuard}>
+                        <Route path="*" component={RegisterPage}/>
+                    </Route>
+
+                    <Route path="/group" component={RouteGuard}>
+                        <Route path="*" component={GroupJoinPage}/>
+                    </Route>
+                    <Route path="/chat" component={RouteGuard}>
+                        <Route path="*" component={ChatPage}/>
+                    </Route>
+                    <Route path="/" component={RouteGuard}>
+                        <Route path="*" component={ChatPage}/>
+                    </Route>
+                    <Route path="*" component={RouteGuard}>
+                        <Route path="*" component={ChatPage}/>
+                    </Route>
+                </Routes>
+            </Router>
         </div>
     );
 };

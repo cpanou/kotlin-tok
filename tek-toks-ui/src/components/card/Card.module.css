@@ -1,0 +1,27 @@
+
+.card {
+    box-shadow: 0px 0px 50px 8px rgba(0,0,0,0.15);
+    padding: 30px;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+}
+
+.cardTitle {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    align-items: start;
+    justify-content: start;
+}
+
+.cardContent {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    align-items: start;
+    justify-content: start;
+}
