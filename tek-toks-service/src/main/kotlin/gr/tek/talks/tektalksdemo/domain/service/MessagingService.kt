@@ -41,7 +41,8 @@ class MessagingService(
                 createdAt = OffsetDateTime.now(),
                 userEntity = user
             ),
-            groupEntity = userGroup.groupEntity
+            groupEntity = userGroup.groupEntity,
+            createdAt = OffsetDateTime.now()
         )
         val groupMessageEntity = groupMessageRepository.save(groupMessage)
         groupMessageEntity.groupEntity.userGroup.forEach {

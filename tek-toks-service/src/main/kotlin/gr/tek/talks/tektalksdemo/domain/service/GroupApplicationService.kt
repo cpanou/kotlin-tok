@@ -35,7 +35,13 @@ class GroupApplicationService(
             .orElseThrow { EntityNotFoundException("User ${userInfo.username} not found") }
         userGroupRepository.save(UserGroupEntity.newEntity(userEntity, groupEntity))
         log.info("User: ${userEntity.id} joined Group: ${groupEntity.name}")
-        return groupEntity.toGroup()
+        return groupEntity.let { userGroup ->
+            val messages = groupMessageRepository
+                .findFirst100ByGroupEntityIdOrderByCreatedAtDesc(userGroup.id)
+                .reversed()
+            userGroup.toGroup()
+                .copy(messages = messages.map { it.messageEntity.toUserMessage() })
+        }
     }
 
     fun fetchUserGroups(user: UserInfo): List<Group> {
@@ -43,7 +49,9 @@ class GroupApplicationService(
             ?: throw UserDomainException("Invalid User Provided")
         return userGroupRepository.findByUserEntityId(userId)
             .map { userGroup ->
-                val messages = groupMessageRepository.findByGroupEntityId(userGroup.groupEntity.id)
+                val messages = groupMessageRepository
+                    .findFirst100ByGroupEntityIdOrderByCreatedAtDesc(userGroup.groupEntity.id)
+                    .reversed()
                 userGroup.groupEntity.toGroup()
                     .copy(messages = messages.map { it.messageEntity.toUserMessage() })
             }
