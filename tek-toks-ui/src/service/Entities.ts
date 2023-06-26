@@ -40,8 +40,8 @@ interface GroupMessage {
     id: string,
     username: string,
     text: string,
+    sentAt: number,
     groupId: string,
-    sentAt: string,
 }
 
 interface UserMessage {

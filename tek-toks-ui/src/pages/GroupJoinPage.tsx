@@ -7,12 +7,14 @@ import Logo from "../components/Logo";
 import Card from "../components/card/Card";
 import CardTitle from "../components/card/CardTitle";
 import CardContent from "../components/card/CardContent";
+import {useNavigate} from "@solidjs/router";
 
 interface MyProps {
 
 }
 
 export default function GroupJoinPage(props: MyProps & JSX.HTMLAttributes<HTMLDivElement>) {
+    const navigate = useNavigate()
     return (
         <Container name="asdasd">
             <Column someprop="asd">
@@ -23,9 +25,9 @@ export default function GroupJoinPage(props: MyProps & JSX.HTMLAttributes<HTMLDi
                         <br/>
                     </CardTitle>
                     <CardContent>
-                        <GroupJoinForm/>
+                        <GroupJoinForm onsuccess={() => navigate("/chat")}/>
                         <p class="text--center">
-                            <a id="switch_signup" href="/chat">Resume toking...</a>
+                            <a id="switch_signup" onclick={e => navigate("/chat")}>Resume toking...</a>
                             <Icon icon="#arrow-right"/>
                         </p>
                     </CardContent>

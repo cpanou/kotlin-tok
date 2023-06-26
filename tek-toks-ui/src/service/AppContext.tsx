@@ -1,18 +1,15 @@
-import {Accessor, Context, createContext, createSignal, Setter, useContext} from "solid-js";
+import {Accessor, Context, createContext, createSignal, Setter, Signal, useContext} from "solid-js";
 import {createStore} from "solid-js/store";
 import UserService from "./UsersService";
 import Storage from "./Storage";
+import MessagingService from "./MessagingService";
 
 
 interface AppStore {
     groups: Accessor<Group[]>,
-    setGroups: Setter<Group[]>,
     userInfo: Accessor<UserInfo>,
-    setUserInfo: Setter<UserInfo>,
     authenticated?: Accessor<boolean>,
-    setAuthenticated?: Setter<boolean>,
-    state: Accessor<any>,
-    setState: Setter<any>,
+    messagingStream: Accessor<GroupMessage>,
 }
 
 interface AppAccessor {
@@ -26,6 +23,8 @@ interface AppAccessor {
     getUser(): Promise<User>
 
     logout(): Promise<void>
+
+    sendMessage(message: GroupMessage): void
 }
 
 interface StateService {
@@ -50,14 +49,21 @@ const define: StateService = {
         },
         register(request: CreateUserRequest): Promise<UserInfo> {
             throw new Error("NOT INITIALIZED")
+        },
+        sendMessage(message: GroupMessage): Promise<UserInfo> {
+            throw new Error("NOT INITIALIZED")
         }
     }
 }
 
 const UserContext: Context<StateService> = createContext<StateService>(define);
 
+//This is getting big :(
 export function UserContextProvider(props: any) {
     const grp: Group[] = Storage.read()?.groups || []
+
+    const grps: Group[] = Storage.read()?.groups || []
+
     const usr: UserInfo = Storage.read()?.userInfo || {
         id: "", lastname: "", firstname: "", username: "", lastSeenAt: "", createdAt: "",
     }
@@ -66,18 +72,48 @@ export function UserContextProvider(props: any) {
     const [groups, setGroups] = createSignal(grp)
     const [userInfo, setUserInfo] = createSignal(usr)
     const [authenticated, setAuthenticated] = createSignal(authz)
-    const [state, setState] = createSignal()
+    const [socket, setSocket] = createSignal({} as WebSocket)
+    const [messageReceived, setMessageReceived] = createSignal({} as GroupMessage)
 
     const newStore: AppStore = {
         groups: groups,
-        setGroups: setGroups,
         userInfo: userInfo,
-        setUserInfo: setUserInfo,
         authenticated: authenticated,
-        setAuthenticated: setAuthenticated,
-        state: state,
-        setState: setState,
+        messagingStream: messageReceived,
     };
+
+    const initializeSocket = () => {
+        const webSocket = MessagingService.initializeSocket(userInfo(), 15)
+        webSocket.addEventListener("message", (event) => {
+            console.log("Message from server ", event.data);
+            let data = JSON.parse(event.data)
+            let grp = groups().find(grp => grp.id === data.groupId)
+            if (!!grp) {
+                let message: UserMessage = {
+                    id: data.id,
+                    username: data.username,
+                    text: data.text,
+                    sentAt: data.sentAt,
+                }
+                grp.messages.push(message)
+                Storage.update({
+                    userInfo: userInfo(),
+                    groups: groups(),
+                    authenticated: true
+                })
+                setGroups(Storage.read()?.groups || [])
+                setMessageReceived({
+                    ...message,
+                    groupId: data.groupId + ""
+                })
+            }
+        });
+        setSocket(webSocket)
+    }
+
+    if (authenticated()) {
+        initializeSocket()
+    }
 
     const [store] = createStore(newStore)
     const accessorService: StateService = {
@@ -92,6 +128,7 @@ export function UserContextProvider(props: any) {
                             userInfo: userInfo(),
                             authenticated: true
                         })
+                        initializeSocket()
                         return userInfo()
                     })
             },
@@ -104,6 +141,7 @@ export function UserContextProvider(props: any) {
                             userInfo: userInfo(),
                             authenticated: true
                         })
+                        initializeSocket()
                         return userInfo()
                     })
             },
@@ -134,20 +172,22 @@ export function UserContextProvider(props: any) {
                     })
             },
             logout() {
-                debugger
                 return new Promise(resolve => {
-                    Storage.clear()
                     setAuthenticated(false)
                     setGroups([])
                     setUserInfo({
                         id: "", lastname: "", firstname: "", username: "", lastSeenAt: "", createdAt: "",
                     })
+                    Storage.clear()
+                    MessagingService.closeSocket(socket())
                     resolve()
                 })
+            },
+            sendMessage(message: GroupMessage) {
+                socket()?.send(JSON.stringify(message))
             }
         }
     }
-
 
     return (
         <UserContext.Provider value={accessorService}>

@@ -5,14 +5,21 @@ import InfoField from "./fields/InfoField";
 import {useUserAccessor} from "../../service/AppContext";
 
 
-export default function GroupJoinForm() {
+interface GroupJoinProps {
+    onsuccess: any
+}
+
+export default function GroupJoinForm(props : GroupJoinProps) {
     const [groupName, setGroupName] = createSignal("");
     const {store, accessor} = useUserAccessor();
 
     async function onsubmit(e: Event) {
         e.preventDefault()
         accessor.joinGroup({groupName: groupName()})
-            .then(grp => console.log("grp is here:", grp))
+            .then(grp => {
+                console.log("grp is here:", grp)
+                props.onsuccess()
+            })
             .catch(e => console.error(e))
     }
 

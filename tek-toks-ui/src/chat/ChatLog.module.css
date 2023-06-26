@@ -55,6 +55,7 @@
     color: rgba(191, 202, 217, 0.73);
     font-weight: bold;
     background-color: var(--background-color-dark);
+    user-select: none;
 }
 
 .chatLog .time .separator {

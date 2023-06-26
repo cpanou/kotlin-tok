@@ -7,7 +7,8 @@ import styles from "./ChatLogEntry.module.css"
 
 interface ChatLogEntryProps {
     message: UserMessage,
-    scrollTo: any
+    scrollTo: any,
+    timestamp?: string
 }
 
 export default function ChatLogEntry(props: ChatLogEntryProps) {
@@ -20,7 +21,7 @@ export default function ChatLogEntry(props: ChatLogEntryProps) {
 
     return (
         <div class={`${styles.entry}  ${isMine ? styles.mine : styles.other}`}>
-
+            {!!props.timestamp ? props.timestamp : ""}
             <div class={styles.messageContainer}>
                 <Show when={isMine} fallback={<OtherMessage message={props.message}/>}>
                     <MyMessage message={props.message}/>
