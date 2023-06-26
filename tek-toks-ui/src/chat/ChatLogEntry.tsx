@@ -1,4 +1,4 @@
-import {createEffect, Show} from "solid-js";
+import {createEffect, onMount, Show} from "solid-js";
 import MyMessage from "./message/MyMessage";
 import OtherMessage from "./message/OtherMessage";
 import {useUserAccessor} from "../service/AppContext";
@@ -15,7 +15,7 @@ export default function ChatLogEntry(props: ChatLogEntryProps) {
     const {store} = useUserAccessor()
     const isMine = props.message.username === store.userInfo().username
 
-    createEffect(() => {
+    onMount(() => {
         props.scrollTo()
     })
 
@@ -23,7 +23,8 @@ export default function ChatLogEntry(props: ChatLogEntryProps) {
         <div class={`${styles.entry}  ${isMine ? styles.mine : styles.other}`}>
             {!!props.timestamp ? props.timestamp : ""}
             <div class={styles.messageContainer}>
-                <Show when={isMine} fallback={<OtherMessage message={props.message}/>}>
+                <Show when={isMine}
+                      fallback={<OtherMessage message={props.message}/>}>
                     <MyMessage message={props.message}/>
                 </Show>
             </div>

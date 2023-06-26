@@ -16,16 +16,11 @@ import ChatLog from "../chat/ChatLog";
 
 export default function ChatPage() {
     const [userInitials, setUserInitials] = createSignal("AA")
-    const [activeGroup, setActiveGroup] = createSignal({id: "-1234"} as Group)
     const {store, accessor} = useUserAccessor();
     const navigate = useNavigate()
 
     function joinGroup(e: Event) {
         navigate("/group", {replace: true})
-    }
-
-    function activateGroup(grp: Group) {
-        setActiveGroup(grp)
     }
 
     createEffect((prevUser) => {
@@ -40,9 +35,7 @@ export default function ChatPage() {
     createEffect((prevGroups) => {
         if (!(store.authenticated && store.authenticated()))
             return
-        if (store.groups().length > 0) {
-            activateGroup(store.groups()[0])
-        } else {
+        if (store.groups().length === 0) {
             accessor.getUser()
                 .then(u => {
                     if (!!u.groups && u.groups.length <= 0) {
@@ -57,8 +50,8 @@ export default function ChatPage() {
             return
         const message = store.messagingStream();
         let tempGrp = store.groups().find(grp => message.groupId === grp.id);
-        if (message.groupId === activeGroup().id && !!tempGrp) {
-            activateGroup(tempGrp)
+        if (message.groupId === store.currentGroup().id && !!tempGrp) {
+            store.setCurrentGroup(tempGrp)
         }
     }, store.messagingStream())
 
@@ -71,8 +64,10 @@ export default function ChatPage() {
                 <CircleButton text="+" onclick={joinGroup}/>
                 <NavList>
                     <For each={store.groups()}>{(grp, i) =>
-                        <GroupItem group={grp} onclick={(e: Event) => activateGroup(grp)}
-                                   active={grp.id === activeGroup().id}/>
+                        <GroupItem group={grp} onclick={(e: Event) => store.setCurrentGroup(grp)}
+                                   active={!store.currentGroup().id
+                                       ? i() ==0
+                                       : grp.id === store.currentGroup().id}/>
                     }</For>
                 </NavList>
                 <NavFooter>
@@ -84,7 +79,7 @@ export default function ChatPage() {
                     </AccountDropdown>
                 </NavFooter>
             </NavBar>
-            <ChatLog group={activeGroup()}/>
+            <ChatLog group={!store.currentGroup().id ? store.groups()[0] : store.currentGroup()}/>
         </FullPage>
     )
 }

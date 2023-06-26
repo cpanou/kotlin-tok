@@ -9,6 +9,8 @@ interface AppStore {
     groups: Accessor<Group[]>,
     userInfo: Accessor<UserInfo>,
     authenticated?: Accessor<boolean>,
+    currentGroup: Accessor<Group>,
+    setCurrentGroup: Setter<Group>,
     messagingStream: Accessor<GroupMessage>,
 }
 
@@ -72,6 +74,7 @@ export function UserContextProvider(props: any) {
     const [groups, setGroups] = createSignal(grp)
     const [userInfo, setUserInfo] = createSignal(usr)
     const [authenticated, setAuthenticated] = createSignal(authz)
+    const [currentGroup, setCurrentGroup] = createSignal({} as Group)
     const [socket, setSocket] = createSignal({} as WebSocket)
     const [messageReceived, setMessageReceived] = createSignal({} as GroupMessage)
 
@@ -79,6 +82,8 @@ export function UserContextProvider(props: any) {
         groups: groups,
         userInfo: userInfo,
         authenticated: authenticated,
+        currentGroup: currentGroup,
+        setCurrentGroup: setCurrentGroup,
         messagingStream: messageReceived,
     };
 
@@ -87,14 +92,14 @@ export function UserContextProvider(props: any) {
         webSocket.addEventListener("message", (event) => {
             console.log("Message from server ", event.data);
             let data = JSON.parse(event.data)
+            let message: UserMessage = {
+                id: data.id,
+                username: data.username,
+                text: data.text,
+                sentAt: data.sentAt,
+            }
             let grp = groups().find(grp => grp.id === data.groupId)
             if (!!grp) {
-                let message: UserMessage = {
-                    id: data.id,
-                    username: data.username,
-                    text: data.text,
-                    sentAt: data.sentAt,
-                }
                 grp.messages.push(message)
                 Storage.update({
                     userInfo: userInfo(),

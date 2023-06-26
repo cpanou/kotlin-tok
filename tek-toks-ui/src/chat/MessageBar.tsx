@@ -15,15 +15,17 @@ export default function MessageBar(props: MessageBarProps) {
     function onSend(e: any) {
         e.preventDefault()
         let msg = message();
-        console.log(msg)
-        accessor.sendMessage({
-            id: "",
-            groupId: props.group.id,
-            text: msg,
-            username: store.userInfo().username,
-            sentAt: ""
-        })
-        setMessage("")
+        if(!!msg) {
+            console.log(msg)
+            accessor.sendMessage({
+                id: "",
+                groupId: props.group.id,
+                text: msg,
+                username: store.userInfo().username,
+                sentAt: 0
+            })
+            setMessage("")
+        }
     }
 
     return (
@@ -32,7 +34,7 @@ export default function MessageBar(props: MessageBarProps) {
                 <textarea id="sendMessage"
                           name="sendMessage"
                           class={styles.sendMessage}
-                          placeholder="Enter you message here"
+                          placeholder="Enter you message"
                           autocomplete="off"
                           value={message()}
                           onkeypress={(e) => {
