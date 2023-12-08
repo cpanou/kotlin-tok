@@ -1,0 +1,27 @@
+
+.author {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.status {
+    color: white;
+    font-weight: bolder;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.name {
+    align-self: flex-start;
+}
+
+.time {
+    align-self: flex-end;
+}
+
+.thumb {
+
+}

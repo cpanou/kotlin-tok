@@ -79,7 +79,7 @@ export default function ChatPage() {
                     </AccountDropdown>
                 </NavFooter>
             </NavBar>
-            <ChatLog group={!store.currentGroup().id ? store.groups()[0] : store.currentGroup()}/>
+            <ChatLog group={store.currentGroup()}/>
         </FullPage>
     )
 }
